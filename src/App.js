@@ -1,8 +1,22 @@
-import { useState } from 'react';
-import styled from 'styled-components';
+import { useState, useEffect } from 'react';
 import 'animate.css';
 import './App.css';
 import icon from './icon_fortnite.png';
+import {
+  OAUTH_PASSWORD,
+  ADMIN_USERNAME,
+  FORTNITE_ID,
+  DISCORD_LINK
+} from './config';
+
+import {
+  Body,
+  CommentWrapper,
+  Username,
+  Comment,
+  Img,
+  InfoWrapper
+} from './components/styled/Chat'
 
 const tmi = require('tmi.js');
 const client = new tmi.Client({
@@ -10,70 +24,76 @@ const client = new tmi.Client({
 		reconnect: true,
 		secure: true
 	},
-	channels: [ 'altyaper' ]
+  identity: {
+    username: ADMIN_USERNAME,
+    password: OAUTH_PASSWORD
+  },
+	channels: [ ADMIN_USERNAME ]
 });
 client.connect().catch(console.error);
 
-const Body = styled.div`
-  padding: 10px;
-  background-color: #002760;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-`
-
-const CommentWrapper = styled.div`
-  font-size: 40px;
-  font-weight: bold;
-  padding: 15px;
-  background: rgb(0,109,180);
-  background: linear-gradient(90deg, rgba(0,109,180,1) 0%, rgba(0,135,194,1) 100%);
-  margin: 5px;
-  text-align: left;
-  font-family: 'Roboto', sans-serif;
-  display: flex;
-  flex-direction: row;
-`
-
-const Username = styled.span`
-  color: #B3FFFF;
-  display: inline-block;
-  vertical-align: middle;
-`
-
-const Comment = styled.span`
-  color: #7FB8DA;
-`
-
-const Img = styled.img`
-  width: 80px;
-  height: 80px;
-  margin-right: 20px;
-`
-
-const InfoWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-`
-
-
 const App = () => {
 
-  const [ currentComments, setComments ] = useState([]);
+  const [ data, setData ] = useState({
+    comments: [],
+    users: {}
+  });
 
-  client.on('message', (channel, tags, message, self) => {
+  const say = (message) => {
+    client.say(ADMIN_USERNAME, message);
+  }
+
+  const handleOnMessage = (_channel, tags, message, self) => {
     if(self) return;
-    currentComments.push({
+    switch(message) {
+      case '!discord':
+        say(`Discord link: ${DISCORD_LINK}`);
+        break;
+      case '!id':
+        say(`Fortnite ID: ${FORTNITE_ID}`);
+        break;
+      case '!setup':
+        say(`
+        Grafica: RTX 2081 SUPER 
+        Memoria: 32GB RAM 
+        Procesador: AMD Ryzen 7 3700X 
+        Monitor: AOC Q27G2G4 144hz 
+        Mouse: HyperX hx-mc002b 
+        Camara: Sony A7II 
+        Luz: Aputure AL-MX 
+        `);
+        break;
+      default:
+        updateComment(_channel, tags, message, self);
+    }
+  }
+
+  const updateComment = (_channel, tags, message, self) => {
+    const { username } = tags;
+    data.comments.push({
       username: tags['display-name'],
       message
     });
-    setComments([...currentComments]);
-  });
+    // If the user already exists in the object then we push the new comment
+    if (data.users[username]) {
+      data.users[username].comments.push(message);
+    } else {
+      // If the user is new, we just add the new comment
+      data.users[username] = {
+        userId: tags['user-id'],
+        comments: [message]
+      }
+    }
+    setData({ ...data });
+  }
 
+  useEffect(() => {
+    client.on('message', handleOnMessage);
+  }, []);
   
   return (
     <Body className="App">
-      { currentComments && currentComments.map((c, idx) => {
+      { data.comments && data.comments.map((c, idx) => {
         return (
           <CommentWrapper key={idx}>
             <Img src={icon} />
