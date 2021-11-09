@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Chatview from './components/Chatview';
 import Homepage from './components/Homepage';
 import Leaderboard from './components/Leaderboard';
+import Predictions from './components/Predictions';
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
         <Route component={Homepage} exact path='/' />
         <Route component={Chatview} path="/chat" />
         <Route component={Leaderboard} path='/leaderboard' />
+        <Route component={Predictions} path='/predictions' />
       </Switch>
     </Router>
   );
