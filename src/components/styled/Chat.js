@@ -53,6 +53,7 @@ export const Img = styled.img`
   width: 80px;
   height: 80px;
   margin-right: 20px;
+  border-radius: 50%;
 `
 
 export const InfoWrapper = styled.div`

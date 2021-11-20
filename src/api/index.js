@@ -24,11 +24,9 @@ export const getLeaderboard = async () => {
   });
 
 
-  console.log(await getPredictions())
-
   data.data.map(async (user) => {
     const response = await getUser(user.user_id);
-    const userProfile = response.data[0];
+    const userProfile = response.data.data[0];
     user.userProfile = userProfile;
     return user;
   });

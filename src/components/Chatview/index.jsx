@@ -3,6 +3,7 @@ import { parse } from 'simple-tmi-emotes'
 import ReactHtmlParser from 'react-html-parser';
 import icon from '../../icon_fortnite.png';
 import iconMod from '../../mod_icon_small.png';
+import { getUser } from '../../api';
 import {
   Body,
   CommentWrapper,
@@ -21,8 +22,6 @@ const Chatview = () => {
   const [ data, setData ] = useState({
     comments: [],
     users: {},
-    leaderId: '',
-    commentCount: 0
   });
   
   const handleOnMessage = (_channel, tags, message, self) => {
@@ -33,9 +32,12 @@ const Chatview = () => {
     }
   }
 
-  const updateComment = (_channel, tags, message, self) => {
+  const updateComment = async (_channel, tags, message, self) => {
     if (self) return;
+    const userId = tags['user-id'];
     const { username } = tags;
+
+    // ADD COMMENT TO COMMENTS
     const options = {
       format: 'default',
       themeMode: 'light',
@@ -43,30 +45,27 @@ const Chatview = () => {
     }
     const emotes = tags['emotes']
     const html = parse(message, emotes, options);
-    data.comments.push({
+    let comment = {
       tags,
-      userId: tags['user-id'],
+      userId,
       username: tags['display-name'],
       message: html
-    });
+    }
+    data.comments.push(comment);
+
+    // ADD USER TO MAP
     // If the user already exists in the object then we push the new comment
-    if (data.users[username]) {
-      data.users[username].comments.push(message);
-      const commentCount = data.users[username].comments.length;
-      data.users[username].commentCount = commentCount;
-      if(commentCount > data.commentCount) {
-        data.commentCount = commentCount;
-        data.leaderId = tags['user-id'];
-      }
+    if (data.users[userId]) {
+      data.users[userId].comments.push(message);
     } else {
       // If the user is new, we just add the new comment
-      data.users[username] = {
+      const user = await getUser(userId);
+      console.log(user);
+      data.users[userId] = {
         userId: tags['user-id'],
         comments: [message],
-        commentCount: 1
+        user: user.data.data[0],
       }
-      data.leaderId = tags['user-id'];
-      data.commentCount = 1;
     }
     setData({ ...data });
   }
@@ -81,7 +80,8 @@ const Chatview = () => {
         { data.comments && data.comments.map((c, idx) => {
           return (
             <CommentWrapper key={idx}>
-              <Img src={icon} />
+              <Img src={data.users[c.userId].user.profile_image_url} />
+              {/* <Img src={icon} /> */}
               <InfoWrapper>
                 <Username>{c.username}</Username>
                 <Comment>{ ReactHtmlParser(c.message) }</Comment>

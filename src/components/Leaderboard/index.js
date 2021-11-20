@@ -20,7 +20,6 @@ const images = {
   defaultRank,
 }
 
-
 const Leaderborad = () => {
 
   const [ leaderboard, setLeaderboard ] = useState({});

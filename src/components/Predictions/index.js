@@ -1,7 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import iconNotification from '../../notification.png';
 import { getPredictions } from '../../api';
+
+const rotate = keyframes`
+  0% {
+    transform: translateX(-100%);
+  }
+
+  10% {
+    transform: translateX(0%);
+  }
+
+  90% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+`;
 
 const PredictionWrapper = styled.div`
   background-color: rgba(255, 255, 255, 0.8);
@@ -10,9 +28,10 @@ const PredictionWrapper = styled.div`
   width: 100%;
 `
 
+
 const PredictionTitle = styled.h1`
   text-transform: uppercase;
-  font-size: 50px;
+  font-size: 40px;
   color: #046688;
   margin-bottom: 10px;
   font-weight: bold;
@@ -26,6 +45,7 @@ const Square = styled.div`
 `
 const PredictionsWrapper = styled.div`
   display: flex;
+  animation: ${rotate} 20s cubic-bezier(.11,.16,.66,.94) forwards;
 `
 
 const OutcomeAnswers = styled.ul`
