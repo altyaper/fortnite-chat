@@ -25,9 +25,10 @@ const say = (message) => {
 }
 
 export const triggerCommand = (commandx) => {
-  const { command } = commandx;
+  const { command } = parseCommand(commandx);
   switch(command) {
     case '!discord':
+      console.log('Discord')
       say(`Discord link: ${DISCORD_LINK}`);
       break;
     case '!id':

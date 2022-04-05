@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { parse } from 'simple-tmi-emotes'
 import ReactHtmlParser from 'react-html-parser';
-import icon from '../../icon_fortnite.png';
-import iconMod from '../../mod_icon_small.png';
+// import TopBar from './TopBar';
+import iconMod from '../../images/mod_icon_small.png';
 import { getUser } from '../../api';
 import {
   Body,
@@ -19,12 +19,15 @@ import Client from './client';
 
 const Chatview = () => {
 
+  // const [ filters, setFilters ] = useState({});
+ 
   const [ data, setData ] = useState({
     comments: [],
     users: {},
   });
   
-  const handleOnMessage = (_channel, tags, message, self) => {
+  const handleOnMessage = (...response) => {
+    const [ _channel, tags, message, self ] = response;
     if (self) return;
     const isCommand = message.startsWith('!');
     if (!isCommand) {
@@ -43,6 +46,7 @@ const Chatview = () => {
       themeMode: 'light',
       scale: '1.0'
     }
+  
     const emotes = tags['emotes']
     const html = parse(message, emotes, options);
     let comment = {
@@ -59,12 +63,15 @@ const Chatview = () => {
       data.users[userId].comments.push(message);
     } else {
       // If the user is new, we just add the new comment
-      const user = await getUser(userId);
-      console.log(user);
-      data.users[userId] = {
-        userId: tags['user-id'],
-        comments: [message],
-        user: user.data.data[0],
+      try {
+        const user = await getUser(userId);
+        data.users[userId] = {
+          userId: tags['user-id'],
+          comments: [message],
+          user: user.data.data[0],
+        }
+      } catch (error) {
+        console.log(error)
       }
     }
     setData({ ...data });
@@ -74,8 +81,14 @@ const Chatview = () => {
     Client.on('message', handleOnMessage);
   }, []);
 
+  const handleOption = (index) => {
+    console.log(index);
+    
+  }
+  console.log(data.comments)
   return (
     <Body className="App">
+      {/* <TopBar onOptionSelected={handleOption}/> */}
       <InnerBody>
         { data.comments && data.comments.map((c, idx) => {
           return (
