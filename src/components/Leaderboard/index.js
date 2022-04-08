@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import ComponentCarousel from 'react-awesome-component-carousel';
-import Axios from 'axios';
 
 import gold from '../../gold.png';
 import silver from '../../silver.png';

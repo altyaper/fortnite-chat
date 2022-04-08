@@ -46,6 +46,19 @@ const Homepage = () => {
             </Card.Body>
           </Card>
         </Col>
+        <Col>
+          <Card style={{ width: '18rem' }}>
+            <Card.Body>
+              <Card.Title>Game</Card.Title>
+              <Card.Text>
+                Alerta tipo notificacion cuando hay una prediccion
+              </Card.Text>
+              <Link to='/game'>
+                <Button>Game</Button> 
+              </Link>
+            </Card.Body>
+          </Card>
+        </Col>
       </Row>
     </Container>
     </div>

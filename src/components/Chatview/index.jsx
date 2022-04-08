@@ -38,7 +38,6 @@ const Chatview = () => {
   const updateComment = async (_channel, tags, message, self) => {
     if (self) return;
     const userId = tags['user-id'];
-    const { username } = tags;
 
     // ADD COMMENT TO COMMENTS
     const options = {

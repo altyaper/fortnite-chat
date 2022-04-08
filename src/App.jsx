@@ -9,6 +9,7 @@ import Chatview from './components/Chatview';
 import Homepage from './components/Homepage';
 import Leaderboard from './components/Leaderboard';
 import Predictions from './components/Predictions';
+import Game from './components/Gameview';
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
         <Route component={Chatview} path="/chat" />
         <Route component={Leaderboard} path='/leaderboard' />
         <Route component={Predictions} path='/predictions' />
+        <Route component={Game} path='/game' />
       </Switch>
     </Router>
   );
