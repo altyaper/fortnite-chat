@@ -20,7 +20,7 @@ const Score = styled.div`
 const Gameview = () => {
   const canvasRef = useRef(null);
   const [game, setGame] = useState();
-  
+  const [flagGame, setFlagGame] = useState(true);
   useEffect(() => {
     const g = new Game(canvasRef.current);
     setGame(g);
@@ -37,9 +37,7 @@ const Gameview = () => {
     const [ _channel, tags, message, self ] = response;
     if (self) return;
     const isCommand = message.startsWith('!');
-    if (isCommand && game) {
-      game.addEnemy();
-    }
+    game.addEnemy(tags);
   }
 
   return (

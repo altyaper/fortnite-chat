@@ -1,5 +1,5 @@
 export default class Enemy {
-	constructor(canvas, radius, color, ctx) {
+	constructor(canvas, radius, color, user, ctx) {
 		if(Math.random() > 0.5) {
 			this.x = Math.random() > 0.5 ? 0 - radius : canvas.width + radius;
 			this.y = Math.random() * canvas.height;
@@ -10,6 +10,7 @@ export default class Enemy {
 		this.radius = radius;
 		this.color = color;
 		this.canvas = canvas;
+		this.user = user;
 
 		const angle = Math.atan2(this.canvas.height / 2 - this.y, this.canvas.width / 2 - this.x);
 		const velocity = {

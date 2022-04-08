@@ -23,7 +23,7 @@ export default class Game {
 			size: 20,
 		};
 		this.bullet = config.bullet || {
-			size: 2
+			size: this.BULLET_SIZE
 		}
 		this.enemy = config.enemy || {
 			color: 'blue',
@@ -63,7 +63,32 @@ export default class Game {
 	randomColor() { return Math.floor(Math.random()*16777215).toString(16) }
 
 	bindEvents() {
-		window.addEventListener('click', (e) => {
+		let timer;
+		document.addEventListener("mousedown", (e) => {
+				timer = setInterval(() => {
+					const angle = Math.atan2(e.clientY - this.canvas.height / 2, e.clientX - this.canvas.width / 2);
+					const velocity = {
+						x: Math.cos(angle),
+						y: Math.sin(angle),
+					}
+					const xBullet = this.canvas.clientWidth / 2;
+					const yBullet = this.canvas.clientHeight / 2;
+					const bullet = new Bullet(
+						xBullet,
+						yBullet,
+						this.BULLET_SIZE,
+						`#ffffff`,
+						velocity,
+						this.ctx
+					);
+					this.bullets.push(bullet);
+				}, 100); // the above code is executed every 100 ms
+		});
+		document.addEventListener("mouseup", function(){
+				if (timer) clearInterval(timer)
+		});
+
+		document.addEventListener('click', (e) => {
 			const angle = Math.atan2(e.clientY - this.canvas.height / 2, e.clientX - this.canvas.width / 2);
 			const velocity = {
 				x: Math.cos(angle),
@@ -82,9 +107,9 @@ export default class Game {
 			this.bullets.push(bullet);
 		});
 
-		window.addEventListener('keypress', (event) => {
-			this.addEnemy();
-		})
+		// window.addEventListener('keypress', (event) => {
+		// 	this.addEnemy();
+		// })
 	}
 
 	generateParticle(x, y, color) {
@@ -127,9 +152,9 @@ export default class Game {
 		});
 	}
 
-	addEnemy() {
+	addEnemy(user) {
 		const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
-		const enemy = new Enemy(this.canvas, this.enemy.radius, color, this.ctx);
+		const enemy = new Enemy(this.canvas, this.enemy.radius, user.color || color, user, this.ctx);
 		this.enemies.push(enemy);
 	}
 
@@ -146,7 +171,7 @@ export default class Game {
 
 			const dist = Math.hypot(this.playerInstanse.x - enemy.x, this.playerInstanse.y - enemy.y);
 			if (dist - enemy.radius - this.playerInstanse.radius < 1) {
-				cancelAnimationFrame(this.animationId);
+				// cancelAnimationFrame(this.animationId);
 			}
 
 			this.bullets.forEach((bullet, bulletIndex) => {
